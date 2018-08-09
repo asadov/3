@@ -4,41 +4,76 @@ new Vue({
         playerHealth: 100,
         monsterHealth: 100,
         gameIsRunning: false,
+        turns: []
     },
     methods: {
         startGame: function () {
             this.gameIsRunning = true;
             this.playerHealth = 100;
             this.monsterHealth = 100;
+            this.turns = [];
         },
         attack: function () {
-            this.monsterHealth -= this.calculateDamage(3, 10);
+            var damage = this.calculateDamage(3, 10)
+            this.monsterHealth -= damage;
+            this.turns.unshift({
+                isPlayer: true,
+                text: "agina vurdun "+ damage
+            });
             if (this.checkWin()) {
                 return;
             }
-            this.playerHealth -= this.calculateDamage(5, 12);
-            this.checkWin();
+            this.monsterAttacks();
 
         },
 
-        // Special attacks
         specialAttack: function () {
+            var damage = this.calculateDamage(10, 20)
+            this.monsterHealth -= damage;
+            this.turns.unshift({
+                isPlayer: true,
+                text: "agina saglam vurdun "+ damage
+            });
+            if (this.checkWin()) {
+                return;
+            }
+            this.monsterAttacks()
 
         },
         // Heals
         heal: function () {
-
+            if (this.playerHealth <=90){
+                this.playerHealth +=10;
+            } else {
+                this.playerHealth = 100;
+            }
+            this.turns.unshift({
+                isPlayer: true,
+                text: "zem zem suyu miss ",
+            });
+            this.monsterAttacks()
         },
-        // Give up
+
         giveUp: function () {
+            this.gameIsRunning = false;
+        },
+
+        monsterAttacks: function() {
+            var damage = this.calculateDamage(5, 12);
+            this.playerHealth -= damage;
+            this.checkWin();
+            this.turns.unshift({
+                isPlayer: false,
+                text: "yaratik kasidi " + damage
+            });
 
         },
-        calculateDamage: function (min, max) {
+        calculateDamage: function(min, max) {
             return Math.max(Math.floor(Math.random() * max) + 1, min);
         },
-        checkWin: function () {
+        checkWin: function() {
             if (this.monsterHealth <= 0) {
-                if (confirm("Bacıyı fena siktin ! Bir daha sikermisin?")) {
+                if (confirm("Bacisini siktin ! Bir daha sikermisin?")) {
                     this.startGame();
                 } else {
                     this.gameIsRunning = false;
@@ -46,7 +81,7 @@ new Vue({
                 return true;
             }
             else if (this.playerHealth <= 0) {
-                    if (confirm("Göt falafoş oldu :(")) {
+                    if (confirm("falafos oldun :(")) {
                         this.startGame();
                     } else {
                         this.gameIsRunning = false;
