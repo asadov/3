@@ -21,13 +21,15 @@ new Vue({
 
         },
 
-
+        // Special attacks
         specialAttack: function () {
 
         },
+        // Heals
         heal: function () {
 
         },
+        // Give up
         giveUp: function () {
 
         },
